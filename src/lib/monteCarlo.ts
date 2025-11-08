@@ -22,7 +22,8 @@ function generateRandomReturn(meanReturn: number, variance: number): number {
 function runMonteCarloIteration(
   parameters: SimulationParameters
 ): SimulationResult[] {
-  const r = parameters.returnRate / 100
+  const returnRate = parameters.returnRate ?? 0
+  const r = returnRate / 100
   const variance = (parameters.returnVariance || 0) / 100
   
   // Create modified parameters with random return
@@ -87,7 +88,8 @@ export function runMonteCarloSimulation(
   }
   
   // Calculate percentiles for final year
-  const finalYear = parameters.years
+  const years = parameters.years ?? 1
+  const finalYear = years
   const finalAmounts = allResults.map((result) => {
     const finalResult = result.find((r) => r.year === finalYear)
     return finalResult ? finalResult.total : 0
@@ -95,7 +97,7 @@ export function runMonteCarloSimulation(
   
   // Calculate percentiles for each year
   const yearlyPercentiles: YearlyPercentiles[] = []
-  for (let year = 1; year <= parameters.years; year++) {
+  for (let year = 1; year <= years; year++) {
     const yearPercentiles = calculateYearPercentiles(allResults, year)
     yearlyPercentiles.push({
       year,
