@@ -147,6 +147,7 @@ const SimulationCard = forwardRef<SimulationCardRef, SimulationCardProps>(
           onChange={handleParametersChange}
           onOpenVarianceConfig={() => setViewMode('variance-config')}
           onOpenManualContributions={() => setViewMode('manual-contributions')}
+          idPrefix={simulation.id}
         />
       </div>
 

@@ -52,12 +52,19 @@ export function calculateYearlyResults(
 
     // Add contribution for the year
     // Use manual contributions if enabled and available, otherwise use standard contribution
-    const contribution =
+    let contribution = additionalContribution
+    if (
       parameters.manualContributionsEnabled &&
       parameters.manualContributions &&
-      parameters.manualContributions[year - 1] !== undefined
-        ? parameters.manualContributions[year - 1]
-        : additionalContribution
+      Array.isArray(parameters.manualContributions)
+    ) {
+      const manualValue = parameters.manualContributions[year - 1]
+      if (manualValue === null) {
+        contribution = 0
+      } else if (manualValue !== undefined) {
+        contribution = manualValue
+      }
+    }
 
     currentTotal += contribution
 
@@ -91,10 +98,15 @@ export function calculateTotalContributions(
     // Only count contributions for the specified number of years
     for (let i = 0; i < years; i++) {
       // Use manual contribution if defined, otherwise fall back to default
-      const yearContribution =
-        parameters.manualContributions[i] !== undefined
-          ? parameters.manualContributions[i]
-          : additionalContribution
+      const manualValue = parameters.manualContributions[i]
+      let yearContribution = additionalContribution
+
+      if (manualValue === null) {
+        yearContribution = 0
+      } else if (manualValue !== undefined) {
+        yearContribution = manualValue
+      }
+
       contributionsTotal += yearContribution || 0
     }
   } else {

@@ -10,7 +10,7 @@ export interface SimulationParameters {
   returnVolatility?: number // optional volatility (standard deviation) for Monte Carlo
   varianceMethod?: VarianceMethod // variance simulation method
   monteCarloIterations?: number // number of simulation runs (default: 1000, max: 10000)
-  manualContributions?: number[] // per-year contributions (optional)
+  manualContributions?: (number | null)[] // per-year contributions (optional)
   manualContributionsEnabled?: boolean // whether manual contributions mode is enabled
 }
 

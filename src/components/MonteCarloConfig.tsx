@@ -12,7 +12,7 @@ export default function MonteCarloConfig({
   onChange,
 }: MonteCarloConfigProps) {
   const iterations = parameters.monteCarloIterations ?? 1000
-  const returnVolatility = parameters.returnVolatility ?? 0
+  const returnVolatility = parameters.returnVolatility ?? 15
 
   const handleIterationsChange = (value: string) => {
     const numValue = parseInt(value, 10) || 1000

@@ -9,6 +9,7 @@ interface SimulationInputsProps {
   onChange: (parameters: Partial<SimulationParameters>) => void
   onOpenVarianceConfig?: () => void
   onOpenManualContributions?: () => void
+  idPrefix?: string
 }
 
 export default function SimulationInputs({
@@ -16,6 +17,7 @@ export default function SimulationInputs({
   onChange,
   onOpenVarianceConfig,
   onOpenManualContributions,
+  idPrefix,
 }: SimulationInputsProps) {
 
   const handleChange = (field: keyof SimulationParameters, value: string | number | boolean | VarianceMethod | number[] | undefined) => {
@@ -55,6 +57,22 @@ export default function SimulationInputs({
 
   const varianceMethod: VarianceMethod = parameters.varianceMethod || 'none'
   const manualContributionsEnabled = parameters.manualContributionsEnabled || false
+  const varianceSelectorName = idPrefix ? `${idPrefix}-varianceMethod` : 'varianceMethod'
+  const varianceSelectorIdPrefix = idPrefix ? `${idPrefix}-variance` : 'variance'
+
+  const handleVarianceMethodChange = (method: VarianceMethod) => {
+    if (
+      method === 'monte-carlo' &&
+      (parameters.returnVolatility === undefined || parameters.returnVolatility === null)
+    ) {
+      onChange({
+        varianceMethod: method,
+        returnVolatility: 15,
+      })
+    } else {
+      onChange({ varianceMethod: method })
+    }
+  }
 
   return (
     <div className="space-y-4 relative">
@@ -149,9 +167,11 @@ export default function SimulationInputs({
         <div className="relative">
           <VarianceMethodSelector
             value={varianceMethod}
-            onChange={(method) => handleChange('varianceMethod', method)}
+            onChange={handleVarianceMethodChange}
             onConfigureClick={() => onOpenVarianceConfig?.()}
             showConfigureButton={varianceMethod !== 'none'}
+            name={varianceSelectorName}
+            idPrefix={varianceSelectorIdPrefix}
           />
         </div>
 

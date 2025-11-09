@@ -7,6 +7,8 @@ interface VarianceMethodSelectorProps {
   onChange: (method: VarianceMethod) => void
   onConfigureClick: () => void
   showConfigureButton: boolean
+  name?: string
+  idPrefix?: string
 }
 
 export default function VarianceMethodSelector({
@@ -14,7 +16,13 @@ export default function VarianceMethodSelector({
   onChange,
   onConfigureClick,
   showConfigureButton,
+  name = 'varianceMethod',
+  idPrefix = 'variance-method',
 }: VarianceMethodSelectorProps) {
+    const radioName = name
+    const noneId = `${idPrefix}-none`
+    const monteCarloId = `${idPrefix}-monte-carlo`
+    const historicalId = `${idPrefix}-historical`
     return (
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
@@ -23,16 +31,16 @@ export default function VarianceMethodSelector({
         <div className="space-y-2">
           <div className="flex items-center">
             <input
-              id="variance-none"
+              id={noneId}
               type="radio"
-              name="varianceMethod"
+              name={radioName}
               value="none"
               checked={value === 'none'}
               onChange={(e) => onChange(e.target.value as VarianceMethod)}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
             <label
-              htmlFor="variance-none"
+              htmlFor={noneId}
               className="ml-2 block text-sm text-gray-700 cursor-pointer"
             >
               None
@@ -40,16 +48,16 @@ export default function VarianceMethodSelector({
           </div>
           <div className="flex items-center">
             <input
-              id="variance-monte-carlo"
+              id={monteCarloId}
               type="radio"
-              name="varianceMethod"
+              name={radioName}
               value="monte-carlo"
               checked={value === 'monte-carlo'}
               onChange={(e) => onChange(e.target.value as VarianceMethod)}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
             <label
-              htmlFor="variance-monte-carlo"
+              htmlFor={monteCarloId}
               className="ml-2 block text-sm text-gray-700 cursor-pointer"
             >
               Monte Carlo
@@ -57,16 +65,16 @@ export default function VarianceMethodSelector({
           </div>
           <div className="flex items-center">
             <input
-              id="variance-historical"
+              id={historicalId}
               type="radio"
-              name="varianceMethod"
+              name={radioName}
               value="historical"
               checked={value === 'historical'}
               onChange={(e) => onChange(e.target.value as VarianceMethod)}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
             <label
-              htmlFor="variance-historical"
+              htmlFor={historicalId}
               className="ml-2 block text-sm text-gray-700 cursor-pointer"
             >
               Historical

@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import type { SimulationConfig } from '../lib/types'
 import { calculateYearlyResults } from '../lib/calculations'
 import { runMonteCarloSimulation } from '../lib/monteCarlo'
+import { sanitizeManualContributions } from '../lib/manualContributions'
 
 export function useSimulation() {
   const [simulations, setSimulations] = useState<SimulationConfig[]>([])
@@ -66,13 +67,25 @@ export function useSimulation() {
         const { parameters } = sim
 
         // Normalize parameters - fill in defaults for empty fields
+        const varianceMethod = parameters.varianceMethod || 'none'
         const normalizedParams = {
           ...parameters,
           initialInvestment: parameters.initialInvestment ?? 0,
           years: parameters.years ?? 1,
           returnRate: parameters.returnRate ?? 0,
           additionalContribution: parameters.additionalContribution ?? 0,
-          returnVolatility: parameters.returnVolatility ?? 0,
+          varianceMethod,
+          returnVolatility:
+            parameters.returnVolatility ??
+            (varianceMethod === 'monte-carlo' ? 15 : 0),
+        }
+
+        const sanitizedManualContributions = sanitizeManualContributions(
+          normalizedParams,
+          normalizedParams.years ?? 1
+        )
+        if (sanitizedManualContributions) {
+          normalizedParams.manualContributions = sanitizedManualContributions
         }
 
         // Validate inputs
@@ -117,13 +130,25 @@ export function useSimulation() {
         const { parameters } = sim
 
         // Normalize parameters - fill in defaults for empty fields
+        const varianceMethod = parameters.varianceMethod || 'none'
         const normalizedParams = {
           ...parameters,
           initialInvestment: parameters.initialInvestment ?? 0,
           years: parameters.years ?? 1,
           returnRate: parameters.returnRate ?? 0,
           additionalContribution: parameters.additionalContribution ?? 0,
-          returnVolatility: parameters.returnVolatility ?? 0,
+          varianceMethod,
+          returnVolatility:
+            parameters.returnVolatility ??
+            (varianceMethod === 'monte-carlo' ? 15 : 0),
+        }
+
+        const sanitizedManualContributions = sanitizeManualContributions(
+          normalizedParams,
+          normalizedParams.years ?? 1
+        )
+        if (sanitizedManualContributions) {
+          normalizedParams.manualContributions = sanitizedManualContributions
         }
 
         // Validate inputs

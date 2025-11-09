@@ -646,3 +646,17 @@ simulate_returns/
 - `src/components/ManualContributionsView.tsx` - Enhance UI and add bulk operations
 - `src/components/ManualContributionsConfig.tsx` - Add preset patterns and improved UX
 - Potentially create helper utilities for common contribution patterns
+
+
+## 11. remove monte carlo iterations variable 
+ - users probably don't know or care about choosing the number of iterations. 
+ - may make sense to just select 10000 for everyone since it seems to run smooth. 
+ - this would make the interface cleaner by removing a variable from the ui.
+
+## 12. update 'set all' button for manual contributions
+ - the current experience of the browser alert input is not cohesive with the rest of the user experience
+ - should find a way to make this input in the normal ui.
+ - could combine this with backlog item #4. set all could be a little ui popup that lets you select the first year amount, and an annual increase, and maybe any other parameters. these params would only be used to help update the contribution values per year. 
+
+## 13. monte carlo returns
+ - include a way for the end user to see what the actual yearly and total average returns were over the period for each percentile. 

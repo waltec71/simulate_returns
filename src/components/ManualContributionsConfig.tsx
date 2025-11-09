@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react'
 import type { SimulationParameters } from '../lib/types'
 import Popout from './Popout'
+import {
+  contributionsMatch,
+  normalizeManualContributions,
+} from '../lib/manualContributions'
 
 interface ManualContributionsConfigProps {
   isOpen: boolean
@@ -20,27 +24,40 @@ export default function ManualContributionsConfig({
   anchorRef,
 }: ManualContributionsConfigProps) {
   const years = parameters.years || 1
-  const [contributions, setContributions] = useState<number[]>(() => {
-    if (parameters.manualContributions && parameters.manualContributions.length === years) {
-      return [...parameters.manualContributions]
-    }
-    return Array(years).fill(parameters.additionalContribution || 0)
-  })
+  const [contributions, setContributions] = useState<(number | null)[]>(() =>
+    normalizeManualContributions(parameters, years)
+  )
 
-  // Update contributions when years change
+  // Update contributions when the inputs change
   useEffect(() => {
-    if (parameters.manualContributions && parameters.manualContributions.length === years) {
-      setContributions([...parameters.manualContributions])
-    } else {
-      const newContributions = Array(years).fill(parameters.additionalContribution || 0)
-      setContributions(newContributions)
+    const normalized = normalizeManualContributions(parameters, years)
+
+    setContributions((current) =>
+      contributionsMatch(current, normalized) ? current : normalized
+    )
+
+    if (!contributionsMatch(parameters.manualContributions, normalized)) {
+      onChange({ manualContributions: normalized })
     }
-  }, [years, parameters.additionalContribution, parameters.manualContributions])
+  }, [
+    years,
+    parameters.manualContributions,
+    parameters.additionalContribution,
+    onChange,
+  ])
 
   const handleContributionChange = (yearIndex: number, value: string) => {
-    const numValue = parseFloat(value) || 0
     const newContributions = [...contributions]
-    newContributions[yearIndex] = Math.max(0, numValue)
+
+    if (value === '') {
+      newContributions[yearIndex] = null
+    } else {
+      const numValue = parseFloat(value)
+      newContributions[yearIndex] = Number.isNaN(numValue)
+        ? null
+        : Math.max(0, numValue)
+    }
+
     setContributions(newContributions)
     onChange({ manualContributions: newContributions })
   }
@@ -49,7 +66,9 @@ export default function ManualContributionsConfig({
     const value = prompt('Enter contribution amount for all years:')
     if (value !== null) {
       const numValue = parseFloat(value) || 0
-      const newContributions = Array(years).fill(Math.max(0, numValue))
+      const fillValue = Math.max(0, numValue)
+      const newContributions = Array(years)
+        .fill(fillValue) as (number | null)[]
       setContributions(newContributions)
       onChange({ manualContributions: newContributions })
     }
@@ -91,7 +110,7 @@ export default function ManualContributionsConfig({
                 type="number"
                 min="0"
                 step="100"
-                value={contribution}
+                value={contribution ?? ''}
                 onChange={(e) => handleContributionChange(index, e.target.value)}
                 onFocus={handleFocus}
                 className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
