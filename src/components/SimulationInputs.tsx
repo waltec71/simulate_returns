@@ -19,11 +19,6 @@ export default function SimulationInputs({
   onOpenManualContributions,
   idPrefix,
 }: SimulationInputsProps) {
-
-  const handleChange = (field: keyof SimulationParameters, value: string | number | boolean | VarianceMethod | number[] | undefined) => {
-    onChange({ [field]: value })
-  }
-
   // Helper to handle number input changes - allows empty strings
   const handleNumberChange = (field: keyof SimulationParameters, value: string) => {
     if (value === '' || value === null || value === undefined) {

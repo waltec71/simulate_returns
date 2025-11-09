@@ -1,5 +1,6 @@
 // TypeScript type definitions for simulation parameters and results
 
+import type { MarketIndex } from './historicalData'
 export type VarianceMethod = 'none' | 'monte-carlo' | 'historical'
 
 export interface SimulationParameters {
@@ -12,6 +13,8 @@ export interface SimulationParameters {
   monteCarloIterations?: number // number of simulation runs (default: 1000, max: 10000)
   manualContributions?: (number | null)[] // per-year contributions (optional)
   manualContributionsEnabled?: boolean // whether manual contributions mode is enabled
+  historicalMarketIndex?: MarketIndex // identifier for historical data source
+  historicalStartYear?: number // optional start year for historical simulations
 }
 
 export interface SimulationResult {
