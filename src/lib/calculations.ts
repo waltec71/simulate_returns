@@ -33,7 +33,8 @@ export function calculateCompoundInterest(
  * Calculate year-by-year results for a simulation
  */
 export function calculateYearlyResults(
-  parameters: SimulationParameters
+  parameters: SimulationParameters,
+  yearlyReturnOverrides?: number[]
 ): SimulationResult[] {
   const results: SimulationResult[] = []
   const returnRate = parameters.returnRate ?? 0
@@ -45,8 +46,9 @@ export function calculateYearlyResults(
   let currentTotal = initialInvestment
 
   for (let year = 1; year <= years; year++) {
-    // Apply return for the year
-    currentTotal = currentTotal * (1 + r)
+    // Apply return for the year (use override if provided)
+    const yearReturn = yearlyReturnOverrides?.[year - 1] ?? r
+    currentTotal = currentTotal * (1 + yearReturn)
 
     // Add contribution for the year
     // Use manual contributions if enabled and available, otherwise use standard contribution

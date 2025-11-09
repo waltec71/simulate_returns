@@ -7,7 +7,7 @@ export interface SimulationParameters {
   years?: number
   returnRate?: number // as percentage
   additionalContribution?: number // per year
-  returnVariance?: number // optional variance for Monte Carlo
+  returnVolatility?: number // optional volatility (standard deviation) for Monte Carlo
   varianceMethod?: VarianceMethod // variance simulation method
   monteCarloIterations?: number // number of simulation runs (default: 1000, max: 10000)
   manualContributions?: number[] // per-year contributions (optional)

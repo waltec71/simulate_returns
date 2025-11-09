@@ -33,3 +33,5 @@ coverage
 .env.production.local
 .env.development.local
 
+# project planning
+historical_returns_plan.md

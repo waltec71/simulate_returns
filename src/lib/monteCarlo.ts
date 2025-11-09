@@ -6,14 +6,14 @@ import { calculateYearlyResults } from './calculations'
 /**
  * Generate a random return rate based on normal distribution
  */
-function generateRandomReturn(meanReturn: number, variance: number): number {
+function generateRandomReturn(meanReturn: number, standardDeviation: number): number {
   // Box-Muller transform for normal distribution
   const u1 = Math.random()
   const u2 = Math.random()
   const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2)
   
   // Apply variance and mean
-  return meanReturn + z0 * Math.sqrt(variance)
+  return meanReturn + z0 * standardDeviation
 }
 
 /**
@@ -23,17 +23,23 @@ function runMonteCarloIteration(
   parameters: SimulationParameters
 ): SimulationResult[] {
   const returnRate = parameters.returnRate ?? 0
-  const r = returnRate / 100
-  const variance = (parameters.returnVariance || 0) / 100
-  
-  // Create modified parameters with random return
-  const randomReturn = generateRandomReturn(r, variance)
-  const modifiedParameters: SimulationParameters = {
-    ...parameters,
-    returnRate: randomReturn * 100,
+  const meanReturn = returnRate / 100
+  const standardDeviation = Math.max(
+    0,
+    (parameters.returnVolatility || 0) / 100
+  )
+  const years = parameters.years ?? 1
+
+  const yearlyReturns: number[] = []
+  for (let year = 0; year < years; year++) {
+    const simulatedReturn =
+      standardDeviation > 0
+        ? generateRandomReturn(meanReturn, standardDeviation)
+        : meanReturn
+    yearlyReturns.push(simulatedReturn)
   }
-  
-  return calculateYearlyResults(modifiedParameters)
+
+  return calculateYearlyResults(parameters, yearlyReturns)
 }
 
 /**

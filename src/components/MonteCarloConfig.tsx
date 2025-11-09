@@ -12,7 +12,7 @@ export default function MonteCarloConfig({
   onChange,
 }: MonteCarloConfigProps) {
   const iterations = parameters.monteCarloIterations ?? 1000
-  const returnVariance = parameters.returnVariance ?? 0
+  const returnVolatility = parameters.returnVolatility ?? 0
 
   const handleIterationsChange = (value: string) => {
     const numValue = parseInt(value, 10) || 1000
@@ -20,9 +20,9 @@ export default function MonteCarloConfig({
     onChange({ monteCarloIterations: clampedValue })
   }
 
-  const handleVarianceChange = (value: string) => {
+  const handleVolatilityChange = (value: string) => {
     const numValue = parseFloat(value) || 0
-    onChange({ returnVariance: Math.max(0, numValue) })
+    onChange({ returnVolatility: Math.max(0, numValue) })
   }
 
   // Helper to select all text when input is focused
@@ -61,23 +61,23 @@ export default function MonteCarloConfig({
 
       <div>
         <label
-          htmlFor="monte-carlo-variance"
+          htmlFor="monte-carlo-volatility"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          Return Variance (%)
+          Return Volatility (%)
         </label>
         <input
-          id="monte-carlo-variance"
+          id="monte-carlo-volatility"
           type="number"
           min="0"
           step="0.1"
-          value={returnVariance}
-          onChange={(e) => handleVarianceChange(e.target.value)}
+          value={returnVolatility}
+          onChange={(e) => handleVolatilityChange(e.target.value)}
           onFocus={handleFocus}
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <p className="mt-1 text-xs text-gray-500">
-          Standard deviation of annual returns
+          Standard deviation (volatility) of annual returns
         </p>
         <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-xs text-gray-700 font-medium mb-2">
@@ -93,8 +93,8 @@ export default function MonteCarloConfig({
               that vary around your expected return rate
             </li>
             <li>
-              The variance parameter represents the standard deviation of annual
-              returns - higher variance means more uncertainty
+              The volatility parameter represents the standard deviation of annual
+              returns - higher volatility means more uncertainty
             </li>
             <li>
               Results show percentile ranges (10th, 25th, 50th, 75th, 90th) -

@@ -178,3 +178,6 @@ Verified that the Monte Carlo variance input correctly handles percentage values
 - Priority levels: Low, Medium, High, Critical
 - Status: Open, In Progress, Resolved, Won't Fix
 
+bug backlog ungroomed:
+
+ - if you have two simulation cards, and the advanced section is open on the first card, when you open the advanced section of the second card, the variance simulation method selection dissapears from the first card

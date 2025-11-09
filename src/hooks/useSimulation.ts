@@ -72,6 +72,7 @@ export function useSimulation() {
           years: parameters.years ?? 1,
           returnRate: parameters.returnRate ?? 0,
           additionalContribution: parameters.additionalContribution ?? 0,
+          returnVolatility: parameters.returnVolatility ?? 0,
         }
 
         // Validate inputs
@@ -86,11 +87,11 @@ export function useSimulation() {
         // Run basic calculation
         const results = calculateYearlyResults(normalizedParams)
 
-        // Run Monte Carlo if variance is specified
+        // Run Monte Carlo if volatility is specified
         let monteCarloResults
         if (
-          normalizedParams.returnVariance &&
-          normalizedParams.returnVariance > 0 &&
+          normalizedParams.returnVolatility &&
+          normalizedParams.returnVolatility > 0 &&
           normalizedParams.varianceMethod === 'monte-carlo'
         ) {
           const iterations = normalizedParams.monteCarloIterations || 1000
@@ -122,6 +123,7 @@ export function useSimulation() {
           years: parameters.years ?? 1,
           returnRate: parameters.returnRate ?? 0,
           additionalContribution: parameters.additionalContribution ?? 0,
+          returnVolatility: parameters.returnVolatility ?? 0,
         }
 
         // Validate inputs
@@ -136,11 +138,11 @@ export function useSimulation() {
         // Run basic calculation
         const results = calculateYearlyResults(normalizedParams)
 
-        // Run Monte Carlo if variance is specified
+        // Run Monte Carlo if volatility is specified
         let monteCarloResults
         if (
-          normalizedParams.returnVariance &&
-          normalizedParams.returnVariance > 0 &&
+          normalizedParams.returnVolatility &&
+          normalizedParams.returnVolatility > 0 &&
           normalizedParams.varianceMethod === 'monte-carlo'
         ) {
           const iterations = normalizedParams.monteCarloIterations || 1000
