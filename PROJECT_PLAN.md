@@ -464,32 +464,46 @@ simulate_returns/
 
 ---
 
-## 4. Annual Contribution Increase Rate
-**Description:** Allow users to set an annual percentage increase rate for contributions, enabling modeling of salary raises, automatic contribution escalations, or planned contribution increases over time.
+## 4. Variable Contributions
+**Description:** Replace the manual contributions configuration with a streamlined variable contributions system that allows users to configure contribution patterns via a popout interface (similar to Monte Carlo configuration). This combines annual increase rates, contribution duration limits, and the ability to fine-tune individual years when needed.
 
 **Implementation Tasks:**
-- Add `contributionIncreaseRate` field to `SimulationParameters` type (as percentage, e.g., 3% = 3.0)
-- Add input field in `SimulationInputs.tsx` for contribution increase rate (% per year)
-  - Place in basic or advanced section (suggest advanced section)
-  - Default: 0% (no increase)
-  - Allow negative values for decreasing contributions
-  - Add tooltip explaining compound contribution increases
-- Update `calculateYearlyResults()` in `calculations.ts` to apply annual increase:
-  - Year 1: use base contribution
-  - Year 2+: multiply previous year's contribution by (1 + increaseRate/100)
-  - Ensure it works with both fixed annual contributions and manual contributions mode
-- Update calculation logic to handle contribution increases:
-  - If manual contributions are enabled, apply increase rate to each manual contribution value
-  - If fixed contribution is used, calculate increasing contributions year by year
-- Add validation: reasonable range (e.g., -50% to 100% per year)
-- Update copy simulation functionality to include contribution increase rate
-- Display contribution schedule in results or add tooltip showing contribution amounts per year
+- Rename "Manual Contributions" to "Variable Contributions" throughout the codebase
+- Change the default experience when accessing the contribution configuration:
+  - Replace the current manual contributions view with a popout similar to `MonteCarloConfig.tsx`
+  - The popout should open by default when user clicks to configure contributions
+  - Remove the "Set all" button/functionality (replaced by the new popout interface)
+- Create new variable contributions popout component with the following variables in order:
+  1. **% Increase per Year** - Annual percentage increase rate for contributions
+     - Default: 0% (no increase)
+     - Allow negative values for decreasing contributions
+     - Add tooltip explaining compound contribution increases
+  2. **Stop Contributing After X Years** - Option to stop contributions after a specific number of years
+     - Default: continue for full simulation period
+     - Validation: must be <= total simulation years
+  3. **Adjust Contributions Per Year** - Button/link that navigates to the detailed year-by-year list
+     - Opens the existing manual contributions view with all years listed
+     - This is an optional advanced option for fine-tuning individual years
+- Update `calculateYearlyResults()` in `calculations.ts` to handle:
+  - Annual increase rate: Year 1 uses base contribution, Year 2+ multiplies previous year's contribution by (1 + increaseRate/100)
+  - Stop contributing after X years: Contributions become 0 after the specified year
+  - Manual overrides: If individual years are set in the detailed view, those take precedence
+- Update types to include:
+  - `contributionIncreaseRate?: number` (as percentage, e.g., 3% = 3.0)
+  - `stopContributingAfterYears?: number` (number of years to contribute, undefined = contribute for full period)
+- Add validation:
+  - Reasonable range for increase rate (e.g., -50% to 100% per year)
+  - Stop contributing years must be between 1 and total simulation years
+- Update copy simulation functionality to include all variable contribution settings
+- Ensure the popout design matches the Monte Carlo configuration popout styling and behavior
 
 **Files to Modify:**
-- `src/lib/types.ts` - Add `contributionIncreaseRate?: number` to `SimulationParameters`
-- `src/components/SimulationInputs.tsx` - Add input field for contribution increase rate
-- `src/lib/calculations.ts` - Update `calculateYearlyResults()` to apply annual increases
-- `src/components/SimulationCard.tsx` - Include contribution increase rate in copy functionality
+- `src/lib/types.ts` - Add `contributionIncreaseRate?: number` and `stopContributingAfterYears?: number` to `SimulationParameters`
+- `src/components/ManualContributionsConfig.tsx` - Replace with new `VariableContributionsConfig.tsx` popout component
+- `src/components/ManualContributionsView.tsx` - Keep for detailed year-by-year adjustments, accessible from the popout
+- `src/lib/calculations.ts` - Update `calculateYearlyResults()` to apply annual increases and stop after X years
+- `src/components/SimulationCard.tsx` - Update to use new variable contributions popout, include all settings in copy functionality
+- Rename references: "Manual Contributions" → "Variable Contributions" throughout codebase
 
 ---
 
@@ -653,17 +667,12 @@ simulate_returns/
  - may make sense to just select 10000 for everyone since it seems to run smooth. 
  - this would make the interface cleaner by removing a variable from the ui.
 
-## 12. update 'set all' button for manual contributions
- - the current experience of the browser alert input is not cohesive with the rest of the user experience
- - should find a way to make this input in the normal ui.
- - could combine this with backlog item #4. set all could be a little ui popup that lets you select the first year amount, and an annual increase, and maybe any other parameters. these params would only be used to help update the contribution values per year. 
-
-## 13. monte carlo returns
+## 12. monte carlo returns
  - include a way for the end user to see what the actual yearly and total average returns were over the period for each percentile. 
 
-## 14. the graph area should summarize what selections are being run (volatility, etc)
+## 13. the graph area should summarize what selections are being run (volatility, etc)
 
-## 15. validation error handling
+## 14. validation error handling
  - currently when invalid values are entered (e.g., negative initial investment, negative years), the simulation simply doesn't run with no feedback to the user
  - should show validation errors to the user when they try to run a simulation with invalid values
  - could display inline error messages next to invalid fields, or show a summary of validation errors when the run button is clicked

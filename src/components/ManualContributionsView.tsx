@@ -57,18 +57,6 @@ export default function ManualContributionsView({
     onChange({ manualContributions: newContributions })
   }
 
-  const handleBulkSet = () => {
-    const value = prompt('Enter contribution amount for all years:')
-    if (value !== null) {
-      const numValue = parseFloat(value) || 0
-      const fillValue = Math.max(0, numValue)
-      const newContributions = Array(years)
-        .fill(fillValue) as (number | null)[]
-      setContributions(newContributions)
-      onChange({ manualContributions: newContributions })
-    }
-  }
-
   // Helper to select all text when input is focused
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.select()
@@ -98,23 +86,15 @@ export default function ManualContributionsView({
           </svg>
         </button>
         <h2 className="text-lg font-semibold text-gray-800 truncate min-w-0 flex-1">
-          Manual Contributions per Year
+          Adjust Contributions Per Year
         </h2>
       </div>
 
       {/* Configuration content */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Configure individual contribution amounts for each year
-          </p>
-          <button
-            onClick={handleBulkSet}
-            className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-          >
-            Set All
-          </button>
-        </div>
+        <p className="text-sm text-gray-600">
+          Fine-tune individual contribution amounts for each year. Leave empty to use variable contribution settings.
+        </p>
 
         <div className="space-y-2 max-h-[500px] overflow-y-auto">
           {contributions.map((contribution, index) => (

@@ -56,6 +56,11 @@ function runHistoricalIteration(
   const additionalContribution = parameters.additionalContribution ?? NORMALIZATION_DEFAULTS.additionalContribution
 
   let currentTotal = initialInvestment
+  
+  // Variable contributions settings
+  const contributionIncreaseRate = parameters.contributionIncreaseRate ?? 0
+  const stopContributingAfterYears = parameters.stopContributingAfterYears
+  let currentYearContribution = additionalContribution
 
   for (let year = 1; year <= years; year++) {
     // Get the historical return for this year (0-indexed)
@@ -70,21 +75,36 @@ function runHistoricalIteration(
     // Apply return for the year
     currentTotal = currentTotal * (1 + r)
 
-    // Add contribution for the year
-    // Use manual contributions if enabled and available, otherwise use standard contribution
-    let contribution = additionalContribution
-    if (
-      parameters.manualContributionsEnabled &&
-      parameters.manualContributions &&
-      Array.isArray(parameters.manualContributions)
-    ) {
-      const manualValue = parameters.manualContributions[year - 1]
-      if (manualValue === null) {
-        contribution = 0
-      } else if (manualValue !== undefined) {
-        contribution = manualValue
+    // Determine contribution for this year
+    let contribution = 0
+    
+    // Check if we should stop contributing after X years
+    const shouldContribute = stopContributingAfterYears === undefined || year <= stopContributingAfterYears
+    
+    if (shouldContribute) {
+      // Priority 1: Manual contributions if enabled and available for this year
+      if (
+        parameters.manualContributionsEnabled &&
+        parameters.manualContributions &&
+        Array.isArray(parameters.manualContributions) &&
+        parameters.manualContributions[year - 1] !== undefined
+      ) {
+        const manualValue = parameters.manualContributions[year - 1]
+        contribution = manualValue === null ? 0 : manualValue
+      } else {
+        // Priority 2: Use variable contributions with annual increase
+        // Year 1: use base contribution
+        // Year 2+: apply annual increase rate
+        if (year === 1) {
+          currentYearContribution = additionalContribution
+        } else if (contributionIncreaseRate !== 0) {
+          // Apply annual increase: multiply by (1 + increaseRate/100)
+          currentYearContribution = currentYearContribution * (1 + contributionIncreaseRate / 100)
+        }
+        contribution = currentYearContribution
       }
     }
+    // If shouldContribute is false, contribution remains 0
 
     currentTotal += contribution
 

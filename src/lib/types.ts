@@ -13,6 +13,8 @@ export interface SimulationParameters {
   monteCarloIterations?: number // number of simulation runs (default: 1000, max: 10000)
   manualContributions?: (number | null)[] // per-year contributions (optional)
   manualContributionsEnabled?: boolean // whether manual contributions mode is enabled
+  contributionIncreaseRate?: number // annual percentage increase rate for contributions (e.g., 3% = 3.0)
+  stopContributingAfterYears?: number // number of years to contribute, undefined = contribute for full period
   historicalMarketIndex?: MarketIndex // identifier for historical data source
   historicalStartYear?: number // optional start year for historical simulations
 }
