@@ -26,7 +26,7 @@ export default function VarianceMethodSelector({
     return (
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
-          Variance Simulation Method
+          Return variability
         </label>
         <div className="space-y-2">
           <div className="flex items-center">
@@ -43,7 +43,7 @@ export default function VarianceMethodSelector({
               htmlFor={noneId}
               className="ml-2 block text-sm text-gray-700 cursor-pointer"
             >
-              None
+              None (fixed return)
             </label>
           </div>
           <div className="flex items-center">
@@ -60,24 +60,27 @@ export default function VarianceMethodSelector({
               htmlFor={monteCarloId}
               className="ml-2 block text-sm text-gray-700 cursor-pointer"
             >
-              Monte Carlo
+              Monte Carlo (randomized yearly returns)
             </label>
           </div>
-          <div className="flex items-center">
+          <div
+            className="flex items-center"
+            title="Historical variance simulation is coming soon."
+          >
             <input
               id={historicalId}
               type="radio"
               name={radioName}
               value="historical"
               checked={value === 'historical'}
-              onChange={(e) => onChange(e.target.value as VarianceMethod)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+              disabled
+              className="h-4 w-4 text-gray-300 border-gray-200 cursor-not-allowed"
             />
             <label
               htmlFor={historicalId}
-              className="ml-2 block text-sm text-gray-700 cursor-pointer"
+              className="ml-2 block text-sm text-gray-400 cursor-not-allowed"
             >
-              Historical
+              Historical (coming soon)
             </label>
           </div>
         </div>

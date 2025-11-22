@@ -1,6 +1,7 @@
 // Core calculation logic for compound interest
 
 import type { SimulationParameters, SimulationResult } from './types'
+import { NORMALIZATION_DEFAULTS } from './defaults'
 
 /**
  * Calculate compound interest with annual contributions
@@ -37,10 +38,10 @@ export function calculateYearlyResults(
   yearlyReturnOverrides?: number[]
 ): SimulationResult[] {
   const results: SimulationResult[] = []
-  const returnRate = parameters.returnRate ?? 0
-  const initialInvestment = parameters.initialInvestment ?? 0
-  const years = parameters.years ?? 1
-  const additionalContribution = parameters.additionalContribution ?? 0
+  const returnRate = parameters.returnRate ?? NORMALIZATION_DEFAULTS.returnRate
+  const initialInvestment = parameters.initialInvestment ?? NORMALIZATION_DEFAULTS.initialInvestment
+  const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
+  const additionalContribution = parameters.additionalContribution ?? NORMALIZATION_DEFAULTS.additionalContribution
   
   const r = returnRate / 100
   let currentTotal = initialInvestment
@@ -83,9 +84,9 @@ export function calculateYearlyResults(
 export function calculateTotalContributions(
   parameters: SimulationParameters
 ): number {
-  const initialInvestment = parameters.initialInvestment ?? 0
-  const years = parameters.years ?? 0
-  const additionalContribution = parameters.additionalContribution ?? 0
+  const initialInvestment = parameters.initialInvestment ?? NORMALIZATION_DEFAULTS.initialInvestment
+  const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
+  const additionalContribution = parameters.additionalContribution ?? NORMALIZATION_DEFAULTS.additionalContribution
 
   let contributionsTotal = 0
 

@@ -171,7 +171,7 @@ const SimulationCard = forwardRef<SimulationCardRef, SimulationCardProps>(
           <SimulationResults
             results={simulation.results}
             monteCarloResults={simulation.monteCarloResults}
-            parameters={simulation.parameters}
+            parameters={simulation.resultsParameters}
           />
         </div>
       )}

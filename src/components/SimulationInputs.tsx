@@ -3,6 +3,7 @@
 import type { SimulationParameters, VarianceMethod } from '../lib/types'
 import AdvancedSection from './AdvancedSection'
 import VarianceMethodSelector from './VarianceMethodSelector'
+import { NORMALIZATION_DEFAULTS, MONTE_CARLO_DEFAULT_VOLATILITY } from '../lib/defaults'
 
 interface SimulationInputsProps {
   parameters: SimulationParameters
@@ -50,7 +51,7 @@ export default function SimulationInputs({
     e.target.select()
   }
 
-  const varianceMethod: VarianceMethod = parameters.varianceMethod || 'none'
+  const varianceMethod: VarianceMethod = parameters.varianceMethod ?? NORMALIZATION_DEFAULTS.varianceMethod
   const manualContributionsEnabled = parameters.manualContributionsEnabled || false
   const varianceSelectorName = idPrefix ? `${idPrefix}-varianceMethod` : 'varianceMethod'
   const varianceSelectorIdPrefix = idPrefix ? `${idPrefix}-variance` : 'variance'
@@ -62,7 +63,7 @@ export default function SimulationInputs({
     ) {
       onChange({
         varianceMethod: method,
-        returnVolatility: 15,
+        returnVolatility: MONTE_CARLO_DEFAULT_VOLATILITY,
       })
     } else {
       onChange({ varianceMethod: method })

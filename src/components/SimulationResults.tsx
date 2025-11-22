@@ -22,6 +22,8 @@ export default function SimulationResults({
   const finalResult = results[results.length - 1]
   const finalAmount = finalResult ? finalResult.total : 0
   const hasMonteCarlo = monteCarloResults && monteCarloResults.percentiles
+  // Use parameters from the simulation run, not current parameters
+  // This ensures contributions don't update until simulation is run
   const totalContributions = parameters
     ? calculateTotalContributions(parameters)
     : 0

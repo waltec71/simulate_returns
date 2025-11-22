@@ -5,6 +5,11 @@ import type { SimulationConfig } from '../lib/types'
 import { calculateYearlyResults } from '../lib/calculations'
 import { runMonteCarloSimulation } from '../lib/monteCarlo'
 import { sanitizeManualContributions } from '../lib/manualContributions'
+import {
+  NEW_SIMULATION_DEFAULTS,
+  NORMALIZATION_DEFAULTS,
+  MONTE_CARLO_DEFAULT_VOLATILITY,
+} from '../lib/defaults'
 
 export function useSimulation() {
   const [simulations, setSimulations] = useState<SimulationConfig[]>([])
@@ -31,13 +36,13 @@ export function useSimulation() {
             id: crypto.randomUUID(),
             name: `Simulation ${prev.length + 1}`,
             parameters: {
-              initialInvestment: 10000,
-              years: 30,
-              returnRate: 7,
-              additionalContribution: 0,
-              varianceMethod: 'none',
-              monteCarloIterations: 1000,
-              manualContributionsEnabled: false,
+              initialInvestment: NEW_SIMULATION_DEFAULTS.initialInvestment,
+              years: NEW_SIMULATION_DEFAULTS.years,
+              returnRate: NEW_SIMULATION_DEFAULTS.returnRate,
+              additionalContribution: NEW_SIMULATION_DEFAULTS.additionalContribution,
+              varianceMethod: NEW_SIMULATION_DEFAULTS.varianceMethod,
+              monteCarloIterations: NEW_SIMULATION_DEFAULTS.monteCarloIterations,
+              manualContributionsEnabled: NEW_SIMULATION_DEFAULTS.manualContributionsEnabled,
             },
           }
       return [...prev, newSimulation]
@@ -90,7 +95,7 @@ export function useSimulation() {
 
         // Validate inputs
         if (
-          normalizedParams.initialInvestment <= 0 ||
+          normalizedParams.initialInvestment < 0 ||
           normalizedParams.years <= 0 ||
           normalizedParams.returnRate === undefined
         ) {
@@ -107,18 +112,19 @@ export function useSimulation() {
           normalizedParams.returnVolatility > 0 &&
           normalizedParams.varianceMethod === 'monte-carlo'
         ) {
-          const iterations = normalizedParams.monteCarloIterations || 1000
+          const iterations = normalizedParams.monteCarloIterations || 10000
           monteCarloResults = runMonteCarloSimulation(normalizedParams, iterations)
         }
 
         // Update parameters with normalized values so user can see defaults that were used
-        // Store the initial investment that was used for these results
+        // Store the full parameters that were used for these results
         return {
           ...sim,
           parameters: normalizedParams,
           results,
           monteCarloResults,
-          resultsInitialInvestment: normalizedParams.initialInvestment,
+          resultsInitialInvestment: normalizedParams.initialInvestment, // Keep for backwards compatibility
+          resultsParameters: { ...normalizedParams }, // Store full parameters used for this simulation
         }
       })
     )
@@ -130,22 +136,24 @@ export function useSimulation() {
         const { parameters } = sim
 
         // Normalize parameters - fill in defaults for empty fields
-        const varianceMethod = parameters.varianceMethod || 'none'
+        const varianceMethod = parameters.varianceMethod ?? NORMALIZATION_DEFAULTS.varianceMethod
         const normalizedParams = {
           ...parameters,
-          initialInvestment: parameters.initialInvestment ?? 0,
-          years: parameters.years ?? 1,
-          returnRate: parameters.returnRate ?? 0,
-          additionalContribution: parameters.additionalContribution ?? 0,
+          initialInvestment: parameters.initialInvestment ?? NORMALIZATION_DEFAULTS.initialInvestment,
+          years: parameters.years ?? NORMALIZATION_DEFAULTS.years,
+          returnRate: parameters.returnRate ?? NORMALIZATION_DEFAULTS.returnRate,
+          additionalContribution: parameters.additionalContribution ?? NORMALIZATION_DEFAULTS.additionalContribution,
           varianceMethod,
           returnVolatility:
             parameters.returnVolatility ??
-            (varianceMethod === 'monte-carlo' ? 15 : 0),
+            (varianceMethod === 'monte-carlo' ? MONTE_CARLO_DEFAULT_VOLATILITY : NORMALIZATION_DEFAULTS.returnVolatility),
+          monteCarloIterations: parameters.monteCarloIterations ?? NORMALIZATION_DEFAULTS.monteCarloIterations,
+          manualContributionsEnabled: parameters.manualContributionsEnabled ?? NORMALIZATION_DEFAULTS.manualContributionsEnabled,
         }
 
         const sanitizedManualContributions = sanitizeManualContributions(
           normalizedParams,
-          normalizedParams.years ?? 1
+          normalizedParams.years
         )
         if (sanitizedManualContributions) {
           normalizedParams.manualContributions = sanitizedManualContributions
@@ -153,7 +161,7 @@ export function useSimulation() {
 
         // Validate inputs
         if (
-          normalizedParams.initialInvestment <= 0 ||
+          normalizedParams.initialInvestment < 0 ||
           normalizedParams.years <= 0 ||
           normalizedParams.returnRate === undefined
         ) {
@@ -170,18 +178,18 @@ export function useSimulation() {
           normalizedParams.returnVolatility > 0 &&
           normalizedParams.varianceMethod === 'monte-carlo'
         ) {
-          const iterations = normalizedParams.monteCarloIterations || 1000
-          monteCarloResults = runMonteCarloSimulation(normalizedParams, iterations)
+          monteCarloResults = runMonteCarloSimulation(normalizedParams, normalizedParams.monteCarloIterations)
         }
 
         // Update parameters with normalized values so user can see defaults that were used
-        // Store the initial investment that was used for these results
+        // Store the full parameters that were used for these results
         return {
           ...sim,
           parameters: normalizedParams,
           results,
           monteCarloResults,
-          resultsInitialInvestment: normalizedParams.initialInvestment,
+          resultsInitialInvestment: normalizedParams.initialInvestment, // Keep for backwards compatibility
+          resultsParameters: { ...normalizedParams }, // Store full parameters used for this simulation
         }
       })
     )

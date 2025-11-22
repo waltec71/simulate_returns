@@ -180,4 +180,4 @@ Verified that the Monte Carlo variance input correctly handles percentage values
 
 bug backlog ungroomed:
 
- - if you have two simulation cards, and the advanced section is open on the first card, when you open the advanced section of the second card, the variance simulation method selection dissapears from the first card
+- if you select manual contribution, then run simulation, then select monte carlo (while leaving manual contribution selected), then run simulation again, it does not show the final amount percentiles or the percentiles on the graph.

@@ -660,3 +660,11 @@ simulate_returns/
 
 ## 13. monte carlo returns
  - include a way for the end user to see what the actual yearly and total average returns were over the period for each percentile. 
+
+## 14. the graph area should summarize what selections are being run (volatility, etc)
+
+## 15. validation error handling
+ - currently when invalid values are entered (e.g., negative initial investment, negative years), the simulation simply doesn't run with no feedback to the user
+ - should show validation errors to the user when they try to run a simulation with invalid values
+ - could display inline error messages next to invalid fields, or show a summary of validation errors when the run button is clicked
+ - alternatively, could disable the run button when values are invalid and show why it's disabled

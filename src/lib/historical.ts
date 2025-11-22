@@ -11,6 +11,7 @@ import {
   getReturnsForRange,
   getValidStartYears,
 } from './historicalData'
+import { NORMALIZATION_DEFAULTS } from './defaults'
 
 /**
  * Calculate percentiles from an array of values
@@ -50,9 +51,9 @@ function runHistoricalIteration(
   historicalReturns: number[]
 ): SimulationResult[] {
   const results: SimulationResult[] = []
-  const initialInvestment = parameters.initialInvestment ?? 0
-  const years = parameters.years ?? 1
-  const additionalContribution = parameters.additionalContribution ?? 0
+  const initialInvestment = parameters.initialInvestment ?? NORMALIZATION_DEFAULTS.initialInvestment
+  const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
+  const additionalContribution = parameters.additionalContribution ?? NORMALIZATION_DEFAULTS.additionalContribution
 
   let currentTotal = initialInvestment
 
@@ -108,7 +109,7 @@ function runHistoricalSimulationForPeriod(
     throw new Error('Market index is required for historical simulation')
   }
 
-  const years = parameters.years ?? 1
+  const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
   const endYear = startYear + years - 1
 
   // Get historical returns for the specified range
@@ -214,7 +215,7 @@ export function runHistoricalSimulation(
     throw new Error('Start year is required for historical simulation')
   }
 
-  const years = parameters.years ?? 1
+  const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
   const endYear = startYear + years - 1
 
   // Get historical returns for the specified range

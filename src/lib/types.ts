@@ -49,6 +49,7 @@ export interface SimulationConfig {
   parameters: SimulationParameters
   results?: SimulationResult[]
   monteCarloResults?: MonteCarloResult
-  resultsInitialInvestment?: number // Initial investment used when generating these results
+  resultsInitialInvestment?: number // Initial investment used when generating these results (deprecated, use resultsParameters)
+  resultsParameters?: SimulationParameters // Full parameters used when generating these results
 }
 

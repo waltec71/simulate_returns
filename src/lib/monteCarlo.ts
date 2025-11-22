@@ -2,6 +2,7 @@
 
 import type { SimulationParameters, SimulationResult, MonteCarloResult, YearlyPercentiles } from './types'
 import { calculateYearlyResults } from './calculations'
+import { NORMALIZATION_DEFAULTS } from './defaults'
 
 /**
  * Generate a random return rate based on normal distribution
@@ -22,13 +23,13 @@ function generateRandomReturn(meanReturn: number, standardDeviation: number): nu
 function runMonteCarloIteration(
   parameters: SimulationParameters
 ): SimulationResult[] {
-  const returnRate = parameters.returnRate ?? 0
+  const returnRate = parameters.returnRate ?? NORMALIZATION_DEFAULTS.returnRate
   const meanReturn = returnRate / 100
   const standardDeviation = Math.max(
     0,
-    (parameters.returnVolatility || 0) / 100
+    (parameters.returnVolatility ?? NORMALIZATION_DEFAULTS.returnVolatility) / 100
   )
-  const years = parameters.years ?? 1
+  const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
 
   const yearlyReturns: number[] = []
   for (let year = 0; year < years; year++) {
@@ -78,7 +79,7 @@ function calculateYearPercentiles(
  */
 export function runMonteCarloSimulation(
   parameters: SimulationParameters,
-  iterations: number = 1000,
+  iterations: number = NORMALIZATION_DEFAULTS.monteCarloIterations,
   onProgress?: (progress: number) => void
 ): MonteCarloResult {
   const allResults: SimulationResult[][] = []
@@ -94,7 +95,7 @@ export function runMonteCarloSimulation(
   }
   
   // Calculate percentiles for final year
-  const years = parameters.years ?? 1
+  const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
   const finalYear = years
   const finalAmounts = allResults.map((result) => {
     const finalResult = result.find((r) => r.year === finalYear)
