@@ -53,14 +53,9 @@ export default function SimulationInputs({
 
   const varianceMethod: VarianceMethod = parameters.varianceMethod ?? NORMALIZATION_DEFAULTS.varianceMethod
   const manualContributionsEnabled = parameters.manualContributionsEnabled || false
+  const variableContributionsEnabled = parameters.variableContributionsEnabled || false
   const varianceSelectorName = idPrefix ? `${idPrefix}-varianceMethod` : 'varianceMethod'
   const varianceSelectorIdPrefix = idPrefix ? `${idPrefix}-variance` : 'variance'
-  
-  // Check if variable contributions are enabled (any of the variable contribution settings are set)
-  const variableContributionsEnabled = 
-    manualContributionsEnabled ||
-    (parameters.contributionIncreaseRate !== undefined && parameters.contributionIncreaseRate !== 0) ||
-    (parameters.stopContributingAfterYears !== undefined)
 
   const handleVarianceMethodChange = (method: VarianceMethod) => {
     if (
@@ -144,6 +139,11 @@ export default function SimulationInputs({
           className="block text-sm font-medium text-gray-700 mb-1"
         >
           Additional Contribution per Year ($)
+          {variableContributionsEnabled && (
+            <span className="ml-2 text-xs font-normal text-gray-500 italic">
+              (Variable)
+            </span>
+          )}
         </label>
         <input
           id="additionalContribution"
@@ -153,12 +153,21 @@ export default function SimulationInputs({
           value={parameters.additionalContribution !== undefined ? parameters.additionalContribution : ''}
           onChange={(e) => handleNumberChange('additionalContribution', e.target.value)}
           onFocus={handleFocus}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          disabled={manualContributionsEnabled}
+          className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            variableContributionsEnabled || manualContributionsEnabled
+              ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+              : ''
+          }`}
+          disabled={variableContributionsEnabled || manualContributionsEnabled}
         />
         {manualContributionsEnabled && (
           <p className="mt-1 text-xs text-gray-500">
             Disabled when manual per-year contributions are configured
+          </p>
+        )}
+        {variableContributionsEnabled && !manualContributionsEnabled && (
+          <p className="mt-1 text-xs text-gray-500">
+            Disabled when variable contributions are enabled
           </p>
         )}
       </div>
@@ -179,39 +188,53 @@ export default function SimulationInputs({
 
         {/* Variable Contributions */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Variable Contributions
-          </label>
-          <button
-            onClick={() => onOpenVariableContributions?.()}
-            className="w-full px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
-            aria-label="Configure variable contributions"
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="flex items-center gap-2 mb-2">
+            <input
+              type="checkbox"
+              id="variableContributionsEnabled"
+              checked={variableContributionsEnabled}
+              onChange={(e) => onChange({ variableContributionsEnabled: e.target.checked })}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label
+              htmlFor="variableContributionsEnabled"
+              className="text-sm font-medium text-gray-700 cursor-pointer"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-            Configure Variable Contributions
-          </button>
+              Enable Variable Contributions
+            </label>
+          </div>
           {variableContributionsEnabled && (
-            <p className="mt-1 text-xs text-gray-500">
-              Variable contribution settings are active
-            </p>
+            <>
+              <button
+                onClick={() => onOpenVariableContributions?.()}
+                className="w-full px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
+                aria-label="Configure variable contributions"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                Configure Variable Contributions
+              </button>
+              <p className="mt-1 text-xs text-gray-500">
+                Variable contribution settings are active
+              </p>
+            </>
           )}
         </div>
       </AdvancedSection>

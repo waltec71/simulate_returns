@@ -47,6 +47,7 @@ export function calculateYearlyResults(
   let currentTotal = initialInvestment
 
   // Variable contributions settings
+  const variableContributionsEnabled = parameters.variableContributionsEnabled ?? false
   const contributionIncreaseRate = parameters.contributionIncreaseRate ?? 0
   const stopContributingAfterYears = parameters.stopContributingAfterYears
   let currentYearContribution = additionalContribution
@@ -59,8 +60,8 @@ export function calculateYearlyResults(
     // Determine contribution for this year
     let contribution = 0
     
-    // Check if we should stop contributing after X years
-    const shouldContribute = stopContributingAfterYears === undefined || year <= stopContributingAfterYears
+    // Check if we should stop contributing after X years (only if variable contributions are enabled)
+    const shouldContribute = !variableContributionsEnabled || stopContributingAfterYears === undefined || year <= stopContributingAfterYears
     
     if (shouldContribute) {
       // Priority 1: Manual contributions if enabled and available for this year
@@ -72,8 +73,8 @@ export function calculateYearlyResults(
       ) {
         const manualValue = parameters.manualContributions[year - 1]
         contribution = manualValue === null ? 0 : manualValue
-      } else {
-        // Priority 2: Use variable contributions with annual increase
+      } else if (variableContributionsEnabled) {
+        // Priority 2: Use variable contributions with annual increase (only if enabled)
         // Year 1: use base contribution
         // Year 2+: apply annual increase rate
         if (year === 1) {
@@ -83,6 +84,9 @@ export function calculateYearlyResults(
           currentYearContribution = currentYearContribution * (1 + contributionIncreaseRate / 100)
         }
         contribution = currentYearContribution
+      } else {
+        // Priority 3: Use fixed contribution (when variable contributions are disabled)
+        contribution = additionalContribution
       }
     }
     // If shouldContribute is false, contribution remains 0
@@ -107,12 +111,13 @@ export function calculateTotalContributions(
   const initialInvestment = parameters.initialInvestment ?? NORMALIZATION_DEFAULTS.initialInvestment
   const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
   const additionalContribution = parameters.additionalContribution ?? NORMALIZATION_DEFAULTS.additionalContribution
+  const variableContributionsEnabled = parameters.variableContributionsEnabled ?? false
   const contributionIncreaseRate = parameters.contributionIncreaseRate ?? 0
   const stopContributingAfterYears = parameters.stopContributingAfterYears
 
   let contributionsTotal = 0
   let currentYearContribution = additionalContribution
-  const effectiveYears = stopContributingAfterYears !== undefined 
+  const effectiveYears = variableContributionsEnabled && stopContributingAfterYears !== undefined
     ? Math.min(stopContributingAfterYears, years) 
     : years
 
@@ -134,20 +139,23 @@ export function calculateTotalContributions(
         } else {
           yearContribution = manualValue
         }
-      } else {
-        // Apply variable contribution settings when manual value is not set
+      } else if (variableContributionsEnabled) {
+        // Apply variable contribution settings when manual value is not set (only if enabled)
         if (i === 0) {
           currentYearContribution = additionalContribution
         } else if (contributionIncreaseRate !== 0) {
           currentYearContribution = currentYearContribution * (1 + contributionIncreaseRate / 100)
         }
         yearContribution = currentYearContribution
+      } else {
+        // Use fixed contribution when variable contributions are disabled
+        yearContribution = additionalContribution
       }
 
       contributionsTotal += yearContribution
     }
-  } else {
-    // Use variable contribution settings
+  } else if (variableContributionsEnabled) {
+    // Use variable contribution settings (only if enabled)
     for (let i = 0; i < effectiveYears; i++) {
       if (i === 0) {
         currentYearContribution = additionalContribution
@@ -156,6 +164,9 @@ export function calculateTotalContributions(
       }
       contributionsTotal += currentYearContribution
     }
+  } else {
+    // Use fixed contribution for all years
+    contributionsTotal = additionalContribution * years
   }
 
   // Include initial investment in total

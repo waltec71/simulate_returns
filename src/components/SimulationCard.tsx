@@ -7,9 +7,7 @@ import SimulationGraph from './SimulationGraph'
 import SimulationResults from './SimulationResults'
 import VarianceConfigView from './VarianceConfigView'
 import VariableContributionsView from './VariableContributionsView'
-import ManualContributionsView from './ManualContributionsView'
-
-type ViewMode = 'main' | 'variance-config' | 'variable-contributions' | 'manual-contributions'
+type ViewMode = 'main' | 'variance-config' | 'variable-contributions'
 
 export interface SimulationCardRef {
   resetViewMode: () => void
@@ -86,19 +84,6 @@ const SimulationCard = forwardRef<SimulationCardRef, SimulationCardProps>(
           parameters={simulation.parameters}
           onChange={handleParametersChange}
           onBack={() => setViewMode('main')}
-          onOpenDetailedView={() => setViewMode('manual-contributions')}
-        />
-      </div>
-    )
-  }
-
-  if (viewMode === 'manual-contributions') {
-    return (
-      <div className="bg-white rounded-lg shadow-md p-6 flex flex-col w-[400px]">
-        <ManualContributionsView
-          parameters={simulation.parameters}
-          onChange={handleParametersChange}
-          onBack={() => setViewMode('variable-contributions')}
         />
       </div>
     )

@@ -43,6 +43,7 @@ export function useSimulation() {
               varianceMethod: NEW_SIMULATION_DEFAULTS.varianceMethod,
               monteCarloIterations: NEW_SIMULATION_DEFAULTS.monteCarloIterations,
               manualContributionsEnabled: NEW_SIMULATION_DEFAULTS.manualContributionsEnabled,
+              variableContributionsEnabled: NEW_SIMULATION_DEFAULTS.variableContributionsEnabled,
             },
           }
       return [...prev, newSimulation]
@@ -149,6 +150,7 @@ export function useSimulation() {
             (varianceMethod === 'monte-carlo' ? MONTE_CARLO_DEFAULT_VOLATILITY : NORMALIZATION_DEFAULTS.returnVolatility),
           monteCarloIterations: parameters.monteCarloIterations ?? NORMALIZATION_DEFAULTS.monteCarloIterations,
           manualContributionsEnabled: parameters.manualContributionsEnabled ?? NORMALIZATION_DEFAULTS.manualContributionsEnabled,
+          variableContributionsEnabled: parameters.variableContributionsEnabled ?? NORMALIZATION_DEFAULTS.variableContributionsEnabled,
         }
 
         const sanitizedManualContributions = sanitizeManualContributions(

@@ -7,14 +7,12 @@ interface VariableContributionsViewProps {
   parameters: SimulationParameters
   onChange: (updates: Partial<SimulationParameters>) => void
   onBack: () => void
-  onOpenDetailedView: () => void
 }
 
 export default function VariableContributionsView({
   parameters,
   onChange,
   onBack,
-  onOpenDetailedView,
 }: VariableContributionsViewProps) {
   return (
     <div className="space-y-4">
@@ -48,7 +46,6 @@ export default function VariableContributionsView({
       <VariableContributionsConfig
         parameters={parameters}
         onChange={onChange}
-        onOpenDetailedView={onOpenDetailedView}
       />
     </div>
   )

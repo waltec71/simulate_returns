@@ -6,13 +6,11 @@ import { NORMALIZATION_DEFAULTS } from '../lib/defaults'
 interface VariableContributionsConfigProps {
   parameters: SimulationParameters
   onChange: (updates: Partial<SimulationParameters>) => void
-  onOpenDetailedView?: () => void
 }
 
 export default function VariableContributionsConfig({
   parameters,
   onChange,
-  onOpenDetailedView,
 }: VariableContributionsConfigProps) {
   const years = parameters.years ?? NORMALIZATION_DEFAULTS.years
   const contributionIncreaseRate = parameters.contributionIncreaseRate ?? 0
@@ -43,8 +41,36 @@ export default function VariableContributionsConfig({
     e.target.select()
   }
 
+  const handleStartingContributionChange = (value: string) => {
+    const numValue = value === '' ? undefined : parseFloat(value)
+    onChange({ additionalContribution: numValue !== undefined && !isNaN(numValue) ? Math.max(0, numValue) : undefined })
+  }
+
   return (
     <div className="space-y-4">
+      {/* Starting Contribution */}
+      <div>
+        <label
+          htmlFor="starting-contribution"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Starting Contribution ($)
+        </label>
+        <input
+          id="starting-contribution"
+          type="number"
+          min="0"
+          step="100"
+          value={parameters.additionalContribution !== undefined ? parameters.additionalContribution : ''}
+          onChange={(e) => handleStartingContributionChange(e.target.value)}
+          onFocus={handleFocus}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <p className="mt-1 text-xs text-gray-500">
+          Base contribution amount used for variable contributions
+        </p>
+      </div>
+
       {/* % Increase per Year */}
       <div>
         <label
@@ -112,37 +138,6 @@ export default function VariableContributionsConfig({
         </p>
       </div>
 
-      {/* Adjust Contributions Per Year Button */}
-      <div>
-        <button
-          onClick={onOpenDetailedView}
-          className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
-        >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-          Adjust Contributions Per Year
-        </button>
-        <p className="mt-1 text-xs text-gray-500">
-          Fine-tune individual year contributions (optional)
-        </p>
-      </div>
     </div>
   )
 }

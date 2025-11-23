@@ -12,6 +12,7 @@ export const NEW_SIMULATION_DEFAULTS = {
   varianceMethod: 'none' as const,
   monteCarloIterations: 10000,
   manualContributionsEnabled: false,
+  variableContributionsEnabled: false,
 } as const
 
 /**
@@ -27,6 +28,7 @@ export const NORMALIZATION_DEFAULTS = {
   returnVolatility: 0, // Default is 0, but will be set to 15 if varianceMethod is 'monte-carlo'
   monteCarloIterations: 10000,
   manualContributionsEnabled: false,
+  variableContributionsEnabled: false,
 } as const
 
 /**

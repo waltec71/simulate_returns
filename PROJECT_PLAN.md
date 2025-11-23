@@ -465,7 +465,7 @@ simulate_returns/
 ---
 
 ## 4. Variable Contributions
-**Description:** Replace the manual contributions configuration with a streamlined variable contributions system that allows users to configure contribution patterns via a popout interface (similar to Monte Carlo configuration). This combines annual increase rates, contribution duration limits, and the ability to fine-tune individual years when needed.
+**Description:** Replace the manual contributions configuration with a streamlined variable contributions system that allows users to configure contribution patterns via a popout interface that takes the same space as the simulation card (similar to Monte Carlo configuration). This combines annual increase rates, contribution duration limits, and the ability to fine-tune individual years when needed.
 
 **Implementation Tasks:**
 - Rename "Manual Contributions" to "Variable Contributions" throughout the codebase
@@ -632,34 +632,6 @@ simulate_returns/
 
 ---
 
-## 10. Improve Manual Contributions User Experience
-**Status:** Contribution pause/resume scenarios can be modeled in manual contributions. Focus on making the manual contribution page more user-friendly.
-
-**Description:** Enhance the manual contributions configuration interface to make it easier to model scenarios like contribution pauses, variable contributions, and other real-life planning scenarios.
-
-**Implementation Tasks:**
-- Review current manual contributions UI (`ManualContributionsView.tsx`)
-- Add bulk operations:
-  - "Set all years to X" button
-  - "Fill years Y-Z with X" for ranges
-  - "Copy year X to all" functionality
-- Add preset patterns:
-  - "Pause years X-Y" (set to 0 for specific years)
-  - "Increase by X% per year starting from year Y"
-  - "Decrease by X% per year starting from year Y"
-- Improve visual feedback:
-  - Highlight years with zero contributions
-  - Show contribution trend/graph
-  - Color-code contributions (high/medium/low)
-- Add keyboard shortcuts for faster data entry
-- Consider adding a "contribution schedule" view showing all years at once
-- Add validation and helpful error messages
-- Improve mobile/tablet experience for manual entry
-
-**Files to Modify:**
-- `src/components/ManualContributionsView.tsx` - Enhance UI and add bulk operations
-- `src/components/ManualContributionsConfig.tsx` - Add preset patterns and improved UX
-- Potentially create helper utilities for common contribution patterns
 
 
 ## 11. remove monte carlo iterations variable 
