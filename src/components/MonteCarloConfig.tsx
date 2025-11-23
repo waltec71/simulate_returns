@@ -1,7 +1,7 @@
 // Monte Carlo-specific configuration inputs
 
 import type { SimulationParameters } from '../lib/types'
-import { NORMALIZATION_DEFAULTS, MONTE_CARLO_DEFAULT_VOLATILITY } from '../lib/defaults'
+import { MONTE_CARLO_DEFAULT_VOLATILITY } from '../lib/defaults'
 
 interface MonteCarloConfigProps {
   parameters: SimulationParameters
