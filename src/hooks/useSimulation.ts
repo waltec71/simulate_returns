@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import type { SimulationConfig } from '../lib/types'
 import { calculateYearlyResults } from '../lib/calculations'
 import { runMonteCarloSimulation } from '../lib/monteCarlo'
+import { runHistoricalSimulationAllPeriods } from '../lib/historical'
 import { sanitizeManualContributions } from '../lib/manualContributions'
 import {
   NEW_SIMULATION_DEFAULTS,
@@ -86,6 +87,8 @@ export function useSimulation() {
             (varianceMethod === 'monte-carlo' ? 15 : 0),
           monteCarloIterations: parameters.monteCarloIterations ?? 10000,
           monteCarloBaselineReturn: parameters.monteCarloBaselineReturn,
+          historicalMarketIndex: parameters.historicalMarketIndex,
+          historicalStartYear: parameters.historicalStartYear,
         }
 
         const sanitizedManualContributions = sanitizeManualContributions(
@@ -118,6 +121,21 @@ export function useSimulation() {
           // Default to 10000 iterations if not specified
           const iterations = normalizedParams.monteCarloIterations ?? 10000
           monteCarloResults = runMonteCarloSimulation(normalizedParams, iterations)
+        }
+
+        // Run Historical simulation if historical method is selected
+        if (normalizedParams.varianceMethod === 'historical') {
+          if (!normalizedParams.historicalMarketIndex) {
+            // Skip if no index selected
+            return sim
+          }
+          try {
+            monteCarloResults = runHistoricalSimulationAllPeriods(normalizedParams)
+          } catch (error) {
+            // If simulation fails, return sim without results
+            console.error('Historical simulation failed:', error)
+            return sim
+          }
         }
 
         // Update parameters with normalized values so user can see defaults that were used
@@ -155,6 +173,8 @@ export function useSimulation() {
           monteCarloBaselineReturn: parameters.monteCarloBaselineReturn,
           manualContributionsEnabled: parameters.manualContributionsEnabled ?? NORMALIZATION_DEFAULTS.manualContributionsEnabled,
           variableContributionsEnabled: parameters.variableContributionsEnabled ?? NORMALIZATION_DEFAULTS.variableContributionsEnabled,
+          historicalMarketIndex: parameters.historicalMarketIndex,
+          historicalStartYear: parameters.historicalStartYear,
         }
 
         const sanitizedManualContributions = sanitizeManualContributions(
@@ -187,6 +207,21 @@ export function useSimulation() {
           // Default to 10000 iterations if not specified
           const iterations = normalizedParams.monteCarloIterations ?? 10000
           monteCarloResults = runMonteCarloSimulation(normalizedParams, iterations)
+        }
+
+        // Run Historical simulation if historical method is selected
+        if (normalizedParams.varianceMethod === 'historical') {
+          if (!normalizedParams.historicalMarketIndex) {
+            // Skip if no index selected
+            return sim
+          }
+          try {
+            monteCarloResults = runHistoricalSimulationAllPeriods(normalizedParams)
+          } catch (error) {
+            // If simulation fails, return sim without results
+            console.error('Historical simulation failed:', error)
+            return sim
+          }
         }
 
         // Update parameters with normalized values so user can see defaults that were used

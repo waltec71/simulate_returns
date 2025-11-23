@@ -66,6 +66,14 @@ export default function SimulationInputs({
         varianceMethod: method,
         returnVolatility: MONTE_CARLO_DEFAULT_VOLATILITY,
       })
+    } else if (
+      method === 'historical' &&
+      !parameters.historicalMarketIndex
+    ) {
+      onChange({
+        varianceMethod: method,
+        historicalMarketIndex: 'sp500',
+      })
     } else {
       onChange({ varianceMethod: method })
     }
@@ -124,6 +132,11 @@ export default function SimulationInputs({
               (Variable - see Monte Carlo config)
             </span>
           )}
+          {varianceMethod === 'historical' && (
+            <span className="ml-2 text-xs font-normal text-gray-500 italic">
+              (Not used - historical returns used instead)
+            </span>
+          )}
         </label>
         <input
           id="returnRate"
@@ -134,9 +147,9 @@ export default function SimulationInputs({
           value={parameters.returnRate !== undefined ? parameters.returnRate : ''}
           onChange={(e) => handleNumberChange('returnRate', e.target.value)}
           onFocus={handleFocus}
-          disabled={varianceMethod === 'monte-carlo'}
+          disabled={varianceMethod === 'monte-carlo' || varianceMethod === 'historical'}
           className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-            varianceMethod === 'monte-carlo'
+            varianceMethod === 'monte-carlo' || varianceMethod === 'historical'
               ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
               : ''
           }`}
@@ -144,6 +157,11 @@ export default function SimulationInputs({
         {varianceMethod === 'monte-carlo' && (
           <p className="mt-1 text-xs text-gray-500">
             Return rate is variable in Monte Carlo simulations. Configure baseline return in Monte Carlo settings.
+          </p>
+        )}
+        {varianceMethod === 'historical' && (
+          <p className="mt-1 text-xs text-gray-500">
+            Return rate is not used in historical simulations. Actual historical returns from the selected market index are used instead.
           </p>
         )}
       </div>

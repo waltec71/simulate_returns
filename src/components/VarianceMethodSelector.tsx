@@ -63,24 +63,21 @@ export default function VarianceMethodSelector({
               Monte Carlo (randomized yearly returns)
             </label>
           </div>
-          <div
-            className="flex items-center"
-            title="Historical variance simulation is coming soon."
-          >
+          <div className="flex items-center">
             <input
               id={historicalId}
               type="radio"
               name={radioName}
               value="historical"
               checked={value === 'historical'}
-              disabled
-              className="h-4 w-4 text-gray-300 border-gray-200 cursor-not-allowed"
+              onChange={(e) => onChange(e.target.value as VarianceMethod)}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
             />
             <label
               htmlFor={historicalId}
-              className="ml-2 block text-sm text-gray-400 cursor-not-allowed"
+              className="ml-2 block text-sm text-gray-700 cursor-pointer"
             >
-              Historical (coming soon)
+              Historical (actual market returns)
             </label>
           </div>
         </div>
