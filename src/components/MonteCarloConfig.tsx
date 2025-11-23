@@ -12,14 +12,7 @@ export default function MonteCarloConfig({
   parameters,
   onChange,
 }: MonteCarloConfigProps) {
-  const iterations = parameters.monteCarloIterations ?? NORMALIZATION_DEFAULTS.monteCarloIterations
   const returnVolatility = parameters.returnVolatility ?? MONTE_CARLO_DEFAULT_VOLATILITY
-
-  const handleIterationsChange = (value: string) => {
-    const numValue = parseInt(value, 10) || NORMALIZATION_DEFAULTS.monteCarloIterations
-    const clampedValue = Math.max(100, Math.min(100000, numValue))
-    onChange({ monteCarloIterations: clampedValue })
-  }
 
   const handleVolatilityChange = (value: string) => {
     const numValue = parseFloat(value) || 0
