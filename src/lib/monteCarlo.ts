@@ -23,8 +23,9 @@ function generateRandomReturn(meanReturn: number, standardDeviation: number): nu
 function runMonteCarloIteration(
   parameters: SimulationParameters
 ): SimulationResult[] {
-  const returnRate = parameters.returnRate ?? NORMALIZATION_DEFAULTS.returnRate
-  const meanReturn = returnRate / 100
+  // Use monteCarloBaselineReturn if specified, otherwise fall back to returnRate
+  const baselineReturn = parameters.monteCarloBaselineReturn ?? parameters.returnRate ?? NORMALIZATION_DEFAULTS.returnRate
+  const meanReturn = baselineReturn / 100
   const standardDeviation = Math.max(
     0,
     (parameters.returnVolatility ?? NORMALIZATION_DEFAULTS.returnVolatility) / 100
@@ -82,15 +83,17 @@ export function runMonteCarloSimulation(
   iterations: number = NORMALIZATION_DEFAULTS.monteCarloIterations,
   onProgress?: (progress: number) => void
 ): MonteCarloResult {
+  // Default to 10000 iterations if not specified
+  const actualIterations = iterations || NORMALIZATION_DEFAULTS.monteCarloIterations
   const allResults: SimulationResult[][] = []
   
   // Run all iterations
-  for (let i = 0; i < iterations; i++) {
+  for (let i = 0; i < actualIterations; i++) {
     allResults.push(runMonteCarloIteration(parameters))
     
     // Report progress every 10% or every 100 iterations, whichever is more frequent
-    if (onProgress && (i % Math.max(1, Math.floor(iterations / 10)) === 0 || i === iterations - 1)) {
-      onProgress((i + 1) / iterations)
+    if (onProgress && (i % Math.max(1, Math.floor(actualIterations / 10)) === 0 || i === actualIterations - 1)) {
+      onProgress((i + 1) / actualIterations)
     }
   }
   

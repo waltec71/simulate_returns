@@ -84,6 +84,8 @@ export function useSimulation() {
           returnVolatility:
             parameters.returnVolatility ??
             (varianceMethod === 'monte-carlo' ? 15 : 0),
+          monteCarloIterations: parameters.monteCarloIterations ?? 10000,
+          monteCarloBaselineReturn: parameters.monteCarloBaselineReturn,
         }
 
         const sanitizedManualContributions = sanitizeManualContributions(
@@ -113,7 +115,8 @@ export function useSimulation() {
           normalizedParams.returnVolatility > 0 &&
           normalizedParams.varianceMethod === 'monte-carlo'
         ) {
-          const iterations = normalizedParams.monteCarloIterations || 10000
+          // Default to 10000 iterations if not specified
+          const iterations = normalizedParams.monteCarloIterations ?? 10000
           monteCarloResults = runMonteCarloSimulation(normalizedParams, iterations)
         }
 
@@ -149,6 +152,7 @@ export function useSimulation() {
             parameters.returnVolatility ??
             (varianceMethod === 'monte-carlo' ? MONTE_CARLO_DEFAULT_VOLATILITY : NORMALIZATION_DEFAULTS.returnVolatility),
           monteCarloIterations: parameters.monteCarloIterations ?? NORMALIZATION_DEFAULTS.monteCarloIterations,
+          monteCarloBaselineReturn: parameters.monteCarloBaselineReturn,
           manualContributionsEnabled: parameters.manualContributionsEnabled ?? NORMALIZATION_DEFAULTS.manualContributionsEnabled,
           variableContributionsEnabled: parameters.variableContributionsEnabled ?? NORMALIZATION_DEFAULTS.variableContributionsEnabled,
         }
@@ -180,7 +184,9 @@ export function useSimulation() {
           normalizedParams.returnVolatility > 0 &&
           normalizedParams.varianceMethod === 'monte-carlo'
         ) {
-          monteCarloResults = runMonteCarloSimulation(normalizedParams, normalizedParams.monteCarloIterations)
+          // Default to 10000 iterations if not specified
+          const iterations = normalizedParams.monteCarloIterations ?? 10000
+          monteCarloResults = runMonteCarloSimulation(normalizedParams, iterations)
         }
 
         // Update parameters with normalized values so user can see defaults that were used
